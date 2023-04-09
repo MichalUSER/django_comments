@@ -11,16 +11,25 @@
 {% if comments %}
 <a href="/delete_comments">Delete all</a>
 {% endif %}
+{% load tz %}
+{% timezone "UTC" %}
 <div class="comments">
 	{% for item in comments %}
 	<div class="comment">
 		<p>{{item}}</p>
-		<p>{{ item.date|time:"H:i" }}</p>
+		<p>
+			{% if item.date|date:"Y-m-d" == now|date:"Y-m-d" %}
+			Today
+			{% else %}
+			{{item.date|timesince}} ago
+			{% endif %}
+		</p>
 	</div>
 	{% empty %}
 	<p class="no-comments">No comments</p>
 	{% endfor %}
 </div>
+{% endtimezone %}
 
 <form class="comment_form" action="/add_comment" method="post">
 	{% csrf_token %}
