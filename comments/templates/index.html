@@ -1,40 +1,39 @@
 {% extends "base.html" %}
 
 {% block head %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'index.css' %}?{% now "U" %}">
-<title>Comments App</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'index.css' %}?{% now "U" %}" />
+    <title>Comments App</title>
 {% endblock %}
 
 {% block body %}
-<h1>Comments App</h1>
-{% if comments %}
-<a href="/delete_comments">Delete all</a>
-{% endif %}
-{% load tz %}
-{% timezone "UTC" %}
-<div class="comments">
-	{% for item in comments %}
-	<div class="comment">
-		<p>{{item}}</p>
-		<p>
-			{% if item.date|date:"Y-m-d" == now|date:"Y-m-d" %}
-			Today
-			{% else %}
-			{{item.date|timesince}} ago
-			{% endif %}
-		</p>
-	</div>
-	{% empty %}
-	<p class="no-comments">No comments</p>
-	{% endfor %}
-</div>
+    <h1>Comments App</h1>
+    {% if comments %}
+        <a href="{% url 'delete_comments' %}">Delete all</a>
+    {% endif %}
+    {% load tz %}
+    {% timezone "UTC" %}
+    <div class="comments">
+        {% for item in comments %}
+            <div class="comment">
+                <p>{{ item }}</p>
+                <p>
+                    {% if item.date|date:"Y-m-d" == now|date:"Y-m-d" %}
+                        Today
+                    {% else %}
+                        {{ item.date|timesince }} ago
+                    {% endif %}
+                </p>
+            </div>
+        {% empty %}
+            <p class="no-comments">No comments</p>
+        {% endfor %}
+    </div>
 {% endtimezone %}
-
-<form class="comment_form" action="/add_comment" method="post">
-	{% csrf_token %}
-	<label for="comment">Comment: </label>
-	<input type="text" name="comment" value="{{ comment }}" id="comment">
-	<input type="submit" value="Post">
+<form class="comment_form" action="{% url 'add_comment' %}" method="post">
+    {% csrf_token %}
+    <label for="comment">Comment:</label>
+    <input type="text" name="comment" value="{{ comment }}" id="comment" />
+    <input type="submit" value="Post" />
 </form>
 {% endblock %}
