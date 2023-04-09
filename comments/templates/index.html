@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'index.css' %}?{% now "U" %}">
+<title>Comments App</title>
+{% endblock %}
+
+{% block body %}
+<h1>Comments App</h1>
+{% if comments %}
+<a href="/delete_comments">Delete all</a>
+{% endif %}
+<div class="comments">
+	{% for item in comments %}
+	<div class="comment">
+		<p>{{item}}</p>
+		<p>{{ item.date|time:"H:i" }}</p>
+	</div>
+	{% empty %}
+	<p class="no-comments">No comments</p>
+	{% endfor %}
+</div>
+
+<form class="comment_form" action="/add_comment" method="post">
+	{% csrf_token %}
+	<label for="comment">Comment: </label>
+	<input type="text" name="comment" value="{{ comment }}" id="comment">
+	<input type="submit" value="Post">
+</form>
+{% endblock %}
