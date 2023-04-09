@@ -18,8 +18,8 @@
             <div class="comment">
                 <p>{{ item }}</p>
                 <p>
-                    {% if item.date|date:"Y-m-d" == now|date:"Y-m-d" %}
-                        Today
+                    {% if item.is_today %}
+                        {{ item.date|time:"H:i" }}
                     {% else %}
                         {{ item.date|timesince }} ago
                     {% endif %}
@@ -30,10 +30,11 @@
         {% endfor %}
     </div>
 {% endtimezone %}
-<form class="comment_form" action="{% url 'add_comment' %}" method="post">
-    {% csrf_token %}
-    <label for="comment">Comment:</label>
-    <input type="text" name="comment" value="{{ comment }}" id="comment" />
-    <input type="submit" value="Post" />
-</form>
+<div class="comment_form_parent">
+    <form class="comment_form" action="{% url 'add_comment' %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="comment" placeholder="Comment" value="{{ comment }}" />
+        <input type="submit" value="Post" />
+    </form>
+</div>
 {% endblock %}
