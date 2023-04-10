@@ -4,24 +4,31 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'index.css' %}?{% now "U" %}" />
     <title>Comments App</title>
+    <script>
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        document.cookie = "timezone_name=" + timezone + ";path=/";
+    </script>
 {% endblock %}
 
 {% block body %}
+    {% load tz %}
     <h1>Comments App</h1>
     {% if comments %}
         <a href="{% url 'delete_comments' %}">Delete all</a>
     {% endif %}
-    {% load tz %}
-    {% timezone "UTC" %}
     <div class="comments">
         {% for item in comments %}
             <div class="comment">
                 <p>{{ item }}</p>
-                <p>
+                <p class="date">
                     {% if item.is_today %}
-                        {{ item.date|time:"H:i" }}
+                        {% if user_timezone %}
+                            {{ item.date|timezone:user_timezone|time:"G:i" }}
+                        {% else %}
+                            {{ item.date|time:"G:i" }}
+                        {% endif %}
                     {% else %}
-                        {{ item.date|timesince }} ago
+                        {{ item.date|date:"j.n.Y" }}
                     {% endif %}
                 </p>
             </div>
@@ -29,12 +36,11 @@
             <p class="no-comments">No comments</p>
         {% endfor %}
     </div>
-{% endtimezone %}
-<div class="comment_form_parent">
-    <form class="comment_form" action="{% url 'add_comment' %}" method="post">
-        {% csrf_token %}
-        <input type="text" name="comment" placeholder="Comment" value="{{ comment }}" />
-        <input type="submit" value="Post" />
-    </form>
-</div>
+    <div class="comment_form_parent">
+        <form class="comment_form" action="{% url 'add_comment' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="comment" placeholder="Comment" value="{{ comment }}" />
+            <input type="submit" value="Post" />
+        </form>
+    </div>
 {% endblock %}
