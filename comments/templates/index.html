@@ -5,8 +5,11 @@
     <link rel="stylesheet" href="{% static 'index.css' %}?{% now "U" %}" />
     <title>Comments App</title>
     <script>
-        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        document.cookie = "timezone_name=" + timezone + ";path=/";
+        if (document.cookie.includes("timezone_name") == false) {
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            document.cookie = "timezone_name=" + timezone + ";path=/";
+            location.reload();
+        }
     </script>
 {% endblock %}
 
